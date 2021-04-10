@@ -19,18 +19,29 @@ Includes WASD mappings (up, left, down, right) and escape to quit.
 
 ## References 
 -https://opengameart.org/content/muzzle-flash-with-model (Muzzle flash for weapon)
+
 -https://opengameart.org/content/bullet-decal(Bullet decal for weapon) 
+
 -https://kenney.nl/assets/blaster-kit (Blaster kit used for the weapon model) 
+
 -https://texturehaven.com/tex/?t=brick_wall_001(texture used for walls) 
+
 -https://kenney.nl/assets/simple-space (pack used for minimap icon)
+
 -https://kenney.nl/assets/road-textures(used for minimap routes)
+
 -https://texturehaven.com/tex/?t=cobblestone_floor_08(used for map floor)
+
 -https://kenney.nl/assets/platformer-kit(used for key object)
+
 -https://kenney.nl/assets/blocky-characters(used for robot enemy) 
+
 -https://freesound.org/people/Mrthenoronha/sounds/530057/(used for music of game) 
+
 -https://freesound.org/people/scorepion/sounds/333993/#fromHistory(used for robot sound)
+
 -https://freesound.org/people/BeezleFM/sounds/512137/#fromHistory(used for when you pick up the key) 
--
+
 
 ## Future Development
 None

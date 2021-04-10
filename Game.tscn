@@ -1,19 +1,24 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://UI/InputRemapMenu.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Player/Player.gd" type="Script" id=2]
-[ext_resource path="res://Key/key.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Exit/Exit.gd" type="Script" id=4]
+[ext_resource path="res://Enemy/Enemies.gd" type="Script" id=3]
+[ext_resource path="res://Player/Blaster.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Maze/Maze.gd" type="Script" id=5]
+[ext_resource path="res://MiniMap/MiniMap.gd" type="Script" id=6]
+[ext_resource path="res://Assets/marker.png" type="Texture" id=7]
+[ext_resource path="res://Player/Muzzle.tres" type="Material" id=8]
+[ext_resource path="res://Assets/muzzleflash.obj" type="ArrayMesh" id=9]
+[ext_resource path="res://Player/Flash.gd" type="Script" id=10]
+[ext_resource path="res://Assets/Robot.wav" type="AudioStream" id=11]
+[ext_resource path="res://Assets/Key.wav" type="AudioStream" id=12]
+[ext_resource path="res://Assets/music.wav" type="AudioStream" id=13]
 
-[sub_resource type="SphereShape" id=4]
-radius = 0.5
-
-[sub_resource type="CapsuleShape" id=5]
+[sub_resource type="CapsuleShape" id=2]
 radius = 0.5
 height = 1.5
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=3]
 extents = Vector3( 0.5, 0.1, 0.5 )
 
 [node name="Game" type="Spatial"]
@@ -21,23 +26,8 @@ extents = Vector3( 0.5, 0.1, 0.5 )
 [node name="Maze" type="Spatial" parent="."]
 script = ExtResource( 5 )
 
-[node name="key" parent="Maze" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 79, 0, 1 )
-
-[node name="Exit" type="Area" parent="Maze"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 79, 0, 39 )
-script = ExtResource( 4 )
-
-[node name="Light" type="OmniLight" parent="Maze/Exit"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.394109, 0 )
-light_color = Color( 1, 0, 0, 1 )
-light_energy = 10.0
-omni_range = 3.0
-omni_attenuation = 2.0
-
-[node name="CollisionShape" type="CollisionShape" parent="Maze/Exit"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.166323, 0 )
-shape = SubResource( 4 )
+[node name="Enemies" type="Spatial" parent="Maze"]
+script = ExtResource( 3 )
 
 [node name="Player" type="KinematicBody" parent="."]
 transform = Transform( -1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, 1, 0.5, 1 )
@@ -45,11 +35,11 @@ script = ExtResource( 2 )
 
 [node name="Body" type="CollisionShape" parent="Player"]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.3, 0 )
-shape = SubResource( 5 )
+shape = SubResource( 2 )
 
 [node name="Feet" type="CollisionShape" parent="Player"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0 )
-shape = SubResource( 6 )
+shape = SubResource( 3 )
 
 [node name="Pivot" type="Spatial" parent="Player"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
@@ -57,9 +47,81 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
 [node name="Camera" type="Camera" parent="Player/Pivot"]
 current = true
 
+[node name="Blaster" parent="Player/Pivot" instance=ExtResource( 4 )]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0.3, -0.4, -1 )
+
+[node name="Flash" type="Spatial" parent="Player/Pivot/Blaster"]
+visible = false
+script = ExtResource( 10 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Player/Pivot/Blaster/Flash"]
+transform = Transform( -0.4, 0, -1.30337e-07, 0, 0.4, 0, 1.30337e-07, 0, -0.4, -0.16133, 0.053998, 0.424038 )
+mesh = ExtResource( 9 )
+material/0 = ExtResource( 8 )
+material/1 = ExtResource( 8 )
+material/2 = ExtResource( 8 )
+
+[node name="OmniLight" type="OmniLight" parent="Player/Pivot/Blaster/Flash"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.146, 0.15, 0.255 )
+light_color = Color( 0.996078, 1, 0.458824, 1 )
+light_energy = 100.0
+omni_range = 3.0
+omni_attenuation = 9.31738
+
+[node name="Timer" type="Timer" parent="Player/Pivot/Blaster/Flash"]
+wait_time = 0.1
+one_shot = true
+
+[node name="RayCast" type="RayCast" parent="Player/Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19209e-07, 0, -0.91728 )
+enabled = true
+cast_to = Vector3( 0, 0, -30 )
+
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="VP" type="Control" parent="UI"]
+margin_left = 824.0
+margin_right = 1024.0
+margin_bottom = 200.0
+rect_clip_content = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Background" type="ColorRect" parent="UI/VP"]
+margin_right = 200.0
+margin_bottom = 200.0
+color = Color( 0, 0, 0, 0.752941 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Map_Container" type="Node2D" parent="UI/VP"]
+position = Vector2( 100, 100 )
+
+[node name="MiniMap" type="Node2D" parent="UI/VP/Map_Container"]
+position = Vector2( -100, -100 )
+scale = Vector2( 0.25, 0.25 )
+script = ExtResource( 6 )
+
+[node name="Marker" type="Sprite" parent="UI/VP"]
+position = Vector2( 100, 100 )
+scale = Vector2( 0.2, 0.2 )
+texture = ExtResource( 7 )
 
 [node name="Menu" parent="UI" instance=ExtResource( 1 )]
 pause_mode = 2
 visible = false
-[connection signal="body_entered" from="Maze/Exit" to="Maze/Exit" method="_on_Exit_body_entered"]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 13 )
+volume_db = -25.0
+autoplay = true
+
+[node name="Key" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 12 )
+
+[node name="Robot" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+volume_db = -25.0
+[connection signal="timeout" from="Player/Pivot/Blaster/Flash/Timer" to="Player/Pivot/Blaster/Flash" method="_on_Timer_timeout"]
